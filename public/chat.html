@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- ChatApp
+    <p id="count">1</p>
+    <button id="counter1">counter ^ by 1</button> -->
+    <div style="display:flex">
+        <div style="width:20vw;height: 100vh; background-color:brown">
+
+        </div>
+        <div style="width:80vw;margin-left: 50px;border: 1px solid black;padding: 10px;">
+            <p id="user-name"></p>
+            <div id="messages" style="height: 70vh; overflow-y: scroll;">
+
+            </div>
+            <input placeholder="type your message...." style="padding: 8px;outline: none;" id="weatherInput" />
+            <button id="button">click</button>
+            <button id="location">send Location</button>
+        </div>
+
+    </div>
+    <script id="message-template" type="text/html">
+        <div>
+            <p style="font-weight: 600;">{{username}}&nbsp;&nbsp;&nbsp;{{createdAt}}</p>
+            <p>{{message}}</p>
+        </div>
+    </script>
+    <script id="location-message-template" type="text/html">
+        <div>
+            <span>{{createdAt}} &nbsp;</span><a href="{{message}}">my location</a>
+        </div>
+    </script>
+    <script id="joined-chat-template" type="text/html">
+        <div>
+            <span>{{chat}} &nbsp;</span>
+        </div>
+    </script>
+    <script id="username-template" type="text/html">
+            <p style="font-weight: 600; background-color: burlywood;width: 100%;padding: 6px;height: 30px;text-align: center;">{{username}}</p>
+    </script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.1/mustache.min.js"
+        integrity="sha512-3GRj7sme01zpWwRNPNy48Rda1bD9cq34lqYG5vb8ZXGc+wRqsoBJ3+AC25IYW5w5SrWlzHqIpNIxZt5QF9sXLg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"
+        integrity="sha512-CryKbMe7sjSCDPl18jtJI5DR5jtkUWxPXWaLCst6QjH8wxDexfRJic2WRmRXmstr2Y8SxDDWuBO6CQC6IE4KTA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js"
+        integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="js/index.js"></script>
+    
+</body>
+
+</html>
