@@ -1,7 +1,7 @@
-const user = [];
-const addUser = (username, room, id ) => {
+let user = [];
+const addUser = (username, room, id) => {
     const usern = username.toLowerCase();
-    if (usern==='' || room==='') {
+    if (usern === '' || room === '') {
         return {
             error: "please provide username and room"
         };
@@ -17,8 +17,8 @@ const addUser = (username, room, id ) => {
     user.push({ username, room, id });
     return { error: 'no error' };
 };
-const removeUser = ({ id }) => {
-    const u = [];
+const removeUser = (id) => {
+    let u = [];
     user.forEach(user => {
         if (!(user.id === id)) {
             u.push(user);
@@ -27,18 +27,21 @@ const removeUser = ({ id }) => {
     user = u;
 };
 const getUser = (id) => {
+    let userObj = {};
     user.forEach(user => {
         if (user.id === id) {
-            return user;
+            userObj = user;
         }
     });
+    return userObj;
 };
-const getUserInRoom = (room) => {
-    const userInRoom = [];
+const getUsersInRoom = (room) => {
+    let userInRoom = [];
     user.forEach(user => {
         if (user.room === room) {
             userInRoom.push(user);
         }
     });
+    return userInRoom;
 };
-module.exports= { addUser, removeUser, getUser, getUserInRoom };
+module.exports = { addUser, removeUser, getUser, getUsersInRoom };

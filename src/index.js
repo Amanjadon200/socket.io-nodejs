@@ -3,7 +3,7 @@ const socketio = require('socket.io');
 const path = require('path');
 const app = express();
 const http = require('http');
-const { addUser } = require('./utils/user');
+const { addUser, getUser, getUsersInRoom, removeUser } = require('./utils/user');
 const { message } = require('./utils/message');
 // const options = {
 //     cors: true,
@@ -15,37 +15,41 @@ const directoryPath = path.join(__dirname, '../public');
 const port = process.env.port;
 
 io.on('connection', (socket) => {
-    console.log('websocket connection established');
+    console.log('websocket connection established', socket.id);
     // socket.on('valueChange',(value)=>{
     //     io.emit("countUpdated", value+1);
     // })
     // socket.broadcast.emit('message', 'user joined');
+    // console.log(socket)
     socket.on('sendMessage', (cityName, room) => {
-        io.in(room).emit("sendCityNameToAllClients", message(cityName));
+        const info = getUser(socket.id);
+        io.in(room).emit("sendCityNameToAllClients", message(cityName, info.username));
     });
     socket.on('disconnect', () => {
-        io.emit('message', 'user is disconnected');
+        const user = getUser(socket.id);
+        removeUser(socket.id);
+        let usersInRoom = getUsersInRoom(user.room);
+        io.in(user.room).emit('leftTheChat', `${user.username} left the chat`, usersInRoom);
     });
     socket.on('USER:SEND_LOCATION', (data, callback) => {
 
+        const userInfo = getUser(socket.id);
         const payload = JSON.parse(data);
         // socket.broadcast.emit('message', 'https://www.google.com/maps?q=' + payload.coords.latitude + "," + payload.coords.longitude);
-        io.emit('setLocation', message('https://www.google.com/maps?q=' + payload.coords.latitude + "," + payload.coords.longitude));
+        io.in(userInfo.room).emit('setLocation', message('https://www.google.com/maps?q=' + payload.coords.latitude + "," + payload.coords.longitude));
         callback('Location shared');
     });
     socket.emit('message', "Welcome!");
     socket.on('join', (username, room) => {
-        const addOrNot = addUser(username, room, 1);
-        console.log(addOrNot);
+        const addOrNot = addUser(username, room, socket.id);
         if (addOrNot.error !== 'no error') {
-            console.log('hi aman bro');
             var destination = 'http://localhost:3000';
             socket.emit('redirect', destination);
         }
-
-        socket.join(room);
-        socket.emit('user-name-access', username);
-        socket.broadcast.to(room).emit('joinedChat', username + " joined the chat");
+        else {
+            socket.join(room);
+            io.in(room).emit('joinedChat', username + " joined the chat", getUsersInRoom(room));
+        }
     });
 });
 app.use(express.static(directoryPath));

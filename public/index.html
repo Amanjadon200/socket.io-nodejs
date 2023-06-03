@@ -5,15 +5,25 @@
 
   <h2>HTML Forms</h2>
 
-  <form>
+  <form action="./chat.html">
     <label for="username">Name:</label><br>
     <input type="text" id="name" name="username"><br>
     <label for="room">Room:</label><br>
     <input type="text" id="room" name="room"><br><br>
     <input type="submit" value="Submit">
   </form>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.1/mustache.min.js"
+      integrity="sha512-3GRj7sme01zpWwRNPNy48Rda1bD9cq34lqYG5vb8ZXGc+wRqsoBJ3+AC25IYW5w5SrWlzHqIpNIxZt5QF9sXLg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"
+      integrity="sha512-CryKbMe7sjSCDPl18jtJI5DR5jtkUWxPXWaLCst6QjH8wxDexfRJic2WRmRXmstr2Y8SxDDWuBO6CQC6IE4KTA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js"
+      integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script type="module" src="js/index.js"></script>
+  <script type="module" src="js/abc.js"></script>
 </body>
 
 </html>

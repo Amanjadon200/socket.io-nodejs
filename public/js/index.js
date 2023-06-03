@@ -3,43 +3,51 @@ const socket = io();
 // let counter = document.getElementById('counter1');
 // let paragraph = document.getElementById('count');
 // socket.on('countUpdated',(value)=>{
-//     console.log('after updating',value)
-//     paragraph.innerText = parseInt(value);
-// })
-// counter.addEventListener('click', () => {
-//     socket.emit('valueChange',parseInt(paragraph.innerText))
-// });
-
+    //     console.log('after updating',value)
+    //     paragraph.innerText = parseInt(value);
+    // })
+    // counter.addEventListener('click', () => {
+        //     socket.emit('valueChange',parseInt(paragraph.innerText))
+        // });
+// let userList = [];
+let roomName = document.getElementById('room_name');
+let roomUsersList = document.getElementById('room-users-list');
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+roomName.innerText = room;
+let userChatHeading = document.getElementById('user-name');
+userChatHeading.innerHTML = `<p>${username}</p>`;
+// userList = getUsersInRoom(room);
+// roomUsersList.innerHTML = `<p>${userList.map((user) => { return user.username })}</p>`;
 socket.on('sendCityNameToAllClients', (message) => {
     let messageTemplateHtml = document.getElementById('message-template').innerHTML;
     let messages = document.getElementById('messages');
-    const html = Mustache.render(messageTemplateHtml,{
+    const html = Mustache.render(messageTemplateHtml, {
         message: message.text,
         createdAt: message.createdAt,
-        username
+        username: message.username
     });
     messages.insertAdjacentHTML('beforeend', html);
 });
-const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 // addUser(username, room);
 // if (addUser(username, room).error !== 'no error') {
 //     console.log('hi aman bro');
 //     window.location.href = "http://localhost:3000";
 // }
-socket.on('joinedChat', (message) => {
+socket.on('joinedChat', (message, userList) => {
     let messageTemplateHtml = document.getElementById('joined-chat-template').innerHTML;
     let messages = document.getElementById('messages');
     const html = Mustache.render(messageTemplateHtml, {
         chat: message,
     });
     messages.insertAdjacentHTML('beforeend', html);
-    console.log('hi shyam how');
-    let usernameTemplateHtml = document.getElementById('username-template').innerHTML;
-    let usernameAccess = document.getElementById('user-name');
-    const html2 = Mustache.render(usernameTemplateHtml, {
-        username: username
-    });
-    usernameAccess.insertAdjacentHTML('beforeend', html2);
+    // console.log('hi shyam how');
+    // let usernameTemplateHtml = document.getElementById('username-template').innerHTML;
+    // let usernameAccess = document.getElementById('user-name');
+    // const html2 = Mustache.render(usernameTemplateHtml, {
+    //     username: username
+    // });
+    // usernameAccess.insertAdjacentHTML('beforeend', html2);
+    roomUsersList.innerHTML = `<p>${userList.map((user) => { return user.username; })}</p>`;
 });
 socket.on('disconnected', (value) => {
     console.log(value);
@@ -47,41 +55,43 @@ socket.on('disconnected', (value) => {
 let weatherInput = document.getElementById('weatherInput');
 let locationButton = document.getElementById('location');
 let button = document.getElementById('button');
-console.log(username, room, "&&&&&");
 button.addEventListener('click', (e) => {
     socket.emit('sendMessage', weatherInput.value, room);
     weatherInput.value = "";
-})
-socket.emit('join', username, room);
-socket.on('user-name-access', (username) => {
-    let usernameTemplateHtml = document.getElementById('username-template').innerHTML;
-    let usernameAccess = document.getElementById('user-name');
-    const html2 = Mustache.render(usernameTemplateHtml, {
-        username
-    });
-    usernameAccess.insertAdjacentHTML('beforeend', html2);
 });
-socket.on('message', (message) => {
-    console.log(message);
+socket.emit('join', username, room);
+// socket.on('user-name-access', (username) => {
+//     let usernameTemplateHtml = document.getElementById('username-template').innerHTML;
+//     let usernameAccess = document.getElementById('user-name');
+//     const html2 = Mustache.render(usernameTemplateHtml, {
+//         username
+//     });
+//     usernameAccess.insertAdjacentHTML('beforeend', html2);
+// });
+socket.on('leftTheChat', (message, usersInRoom) => {
+    let messageTemplateHtml = document.getElementById('joined-chat-template').innerHTML;
+    let messages = document.getElementById('messages');
+    const html = Mustache.render(messageTemplateHtml, {
+        chat: message,
+    });
+    // socket.emit('fetchUsers',room)
+    messages.insertAdjacentHTML('beforeend', html);
+    roomUsersList.innerHTML = `<p>${usersInRoom.map((user) => { return user.username; })}</p>`;
 });
 socket.on('setLocation', (url) => {
     let locationMessageTemplateHtml = document.getElementById('location-message-template').innerHTML;
     let messages = document.getElementById('messages');
-    const html = Mustache.render(locationMessageTemplateHtml,{
+    const html = Mustache.render(locationMessageTemplateHtml, {
         message: url.text,
         createdAt: url.createdAt
     });
     messages.insertAdjacentHTML('beforeend', html);
 });
-socket.on('redirect', function(destination) {
-    console.log('karo redirect')
+socket.on('redirect', function (destination) {
     window.location.href = destination;
 });
-
 locationButton.addEventListener('click', async () => {
     locationButton.disabled = true;
-
-    console.log(navigator.geolocation);
     if (!navigator.geolocation) {
         return alert('geolocation is not supported for your browser');
     }
