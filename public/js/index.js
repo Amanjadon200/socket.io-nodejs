@@ -10,6 +10,10 @@ const socket = io();
         //     socket.emit('valueChange',parseInt(paragraph.innerText))
         // });
 // let userList = [];
+let lastScrollHeight = 0;
+// function getTopDistance() {
+//     h = messages.scrollHeight - messages.clientHeight;
+// }
 let roomName = document.getElementById('room_name');
 let roomUsersList = document.getElementById('room-users-list');
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
@@ -18,7 +22,10 @@ let userChatHeading = document.getElementById('user-name');
 userChatHeading.innerHTML = `<p>${username}</p>`;
 // userList = getUsersInRoom(room);
 // roomUsersList.innerHTML = `<p>${userList.map((user) => { return user.username })}</p>`;
-socket.on('sendCityNameToAllClients', (message) => {
+// let lastChild=messages.lastChild;
+// console.log(lastChild)
+let firsTime = false;
+socket.on('sendCityNameToAllClients', (message, infoOfUser) => {
     let messageTemplateHtml = document.getElementById('message-template').innerHTML;
     let messages = document.getElementById('messages');
     const html = Mustache.render(messageTemplateHtml, {
@@ -27,6 +34,26 @@ socket.on('sendCityNameToAllClients', (message) => {
         username: message.username
     });
     messages.insertAdjacentHTML('beforeend', html);
+    let lastChild = messages.lastElementChild.innerHTML;
+    // console.log(lastChild, messages.scrollHeight, messages.scrollTop, messages.clientHeight);
+    // messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+    if (messages.scrollHeight - messages.clientHeight > 0) {
+        if (infoOfUser.id === socket.id) {
+            messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+        }
+        if (firsTime === false) {
+            messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+            firsTime = true;
+        }
+        else {
+            if (!(messages.scrollTop < lastScrollHeight)) {
+                messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+            }
+
+        }
+        lastScrollHeight = messages.scrollHeight - messages.clientHeight;
+    }
+
 });
 // addUser(username, room);
 // if (addUser(username, room).error !== 'no error') {
@@ -57,7 +84,7 @@ let locationButton = document.getElementById('location');
 let button = document.getElementById('button');
 button.addEventListener('click', (e) => {
     socket.emit('sendMessage', weatherInput.value, room);
-    weatherInput.value = "";
+    // weatherInput.value = "";
 });
 socket.emit('join', username, room);
 // socket.on('user-name-access', (username) => {

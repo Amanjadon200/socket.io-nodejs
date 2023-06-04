@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
     // console.log(socket)
     socket.on('sendMessage', (cityName, room) => {
         const info = getUser(socket.id);
-        io.in(room).emit("sendCityNameToAllClients", message(cityName, info.username));
+        io.in(room).emit("sendCityNameToAllClients", message(cityName, info.username),info);
     });
     socket.on('disconnect', () => {
         const user = getUser(socket.id);
